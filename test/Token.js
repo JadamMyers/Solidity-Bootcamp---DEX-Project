@@ -8,7 +8,7 @@ const tokens = (n) => {
  
 describe('Token', () => {
     // Tests go inside here...
-    let token
+    let token, accounts, deployer
 
     beforeEach( async () => {
         // Code executed before each test
@@ -16,7 +16,11 @@ describe('Token', () => {
         // Fetch Token from blockchain
         const Token = await ethers.getContractFactory('Token')
         token = await Token.deploy('Lucky Charms', 'LC', '1000000')
+
+        accounts = await ethers.getSigners()
+        deployer = accounts[0]
     })
+
 
     // Create block for all constructor deployment tests
     describe('Deployment', () => {
@@ -24,7 +28,7 @@ describe('Token', () => {
         const symbol = 'LC'
         const decimals = 18
         const totalSupply = tokens('1000000')
-        
+
         it('has correct name', async () => {
             // Read token name
             // Check that name is correct
@@ -47,6 +51,10 @@ describe('Token', () => {
             // Read token Total Supply
             // Check that Total Supply is correct
             expect(await token.totalSupply()).to.equal(totalSupply)
+        })
+
+        it('assigns total supply to deployer', async () => {
+            expect(await token.balanceOf(deployer.address)).to.equal(totalSupply)
         })
     })
 
