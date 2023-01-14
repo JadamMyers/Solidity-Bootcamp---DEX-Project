@@ -9,12 +9,21 @@ contract Token{
     uint256 public decimals = 18;
     uint256 public totalSupply; 
 
+    // mapping that takes in address as key and returns balanceOf value
     mapping(address => uint256) public balanceOf;
+    // mapping ... minute 13
+    mapping(address => mapping(address=> uint256)) public allowance;
 
     event Transfer(
         address indexed from,
         address indexed to, 
         uint256 value
+    );
+
+    event Approval(
+        address indexed owner, 
+        address indexed spender,
+         uint256 value
     );
 
     constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
@@ -41,5 +50,19 @@ contract Token{
         // Emit Event
         emit Transfer(msg.sender, _to, _value);
         return true;
+    }
+
+    function approve(address _spender, uint256 _value) 
+        public 
+        returns(bool success)
+    {
+        require(_spender != address(0));
+
+        allowance[msg.sender][_spender] =_value;
+
+        // Emit Event
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+
     }
 }
